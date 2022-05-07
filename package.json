@@ -4,13 +4,16 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
 		"start": "node index.js"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"ethers": "^5.6.5"
-	}
+		"ethers": "^5.6.5",
+		"jest": "^28.1.0",
+		"mocha": "^10.0.0"
+	},
+	"type": "module"
 }

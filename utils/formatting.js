@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-import { formatEther } from "ethers/lib/utils";
+import { formatEther } from "ethers/lib/utils.js";
 
 /// Converts a hexadecimal gwei value to readable units of Ether.
 export const convertHexGweiToEth = (hex) => {

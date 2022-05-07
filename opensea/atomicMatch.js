@@ -1,5 +1,9 @@
-import { convertHexGweiToEth } from "../utils/formatting";
-import { BigNumber } from "ethers";
+import { convertHexGweiToEth } from "../utils/formatting.js";
+import { BigNumber, ethers } from "ethers";
+
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const abi = require('./abi.json');
 
 /* ----------------------------------------------------
 |													   |
@@ -53,6 +57,12 @@ const feeDescription = (hex, totalCost) => {
 	const percent = percentageFromBasisHex(hex);
 	const feeCost = totalCost / 100 * percent;
 	return percent.toString() + "%" + " | " + feeCost + "E"
+}
+
+export const decodeAtomicMatch = (data) => {
+	const ifc = new ethers.utils.Interface(abi)
+	const parsedTransaction = ifc.parseTransaction({ data })
+	return parsedTransaction;
 }
 
 // Parses an atomicMatch_ transaction and returns a structured description.
