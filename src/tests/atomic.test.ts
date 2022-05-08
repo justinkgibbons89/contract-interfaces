@@ -1,16 +1,24 @@
-import { decodeAtomicMatch } from '../opensea/atomicMatch.js';
+import { decodeAtomicMatch, parseAtomicMatch } from "../opensea/atomicMatch";
 
 /* ----------------------
 |		Definition	     |
  ---------------------- */
 
-test('decodes an atomic match transaction', () => {
-	const decoded = decodeAtomicMatch(data);
-	expect(decoded.args.addrs).toStrictEqual(addresses);
-	expect(decoded.args.calldataBuy).toStrictEqual(calldataBuy);
-	expect(decoded.args.calldataSell).toStrictEqual(calldataSell);
-	expect(decoded.args.rssMetadata).toStrictEqual(rssMetadata);
-	expect(decoded.args.feeMethodsSidesKindsHowToCalls).toStrictEqual(feeMethodsSidesKindsHowToCalls);
+describe("atomic match understanding", () => {
+	test('decodes a transaction', () => {
+		const decoded = decodeAtomicMatch(data);
+		expect(decoded.args.addrs).toStrictEqual(addresses);
+		expect(decoded.args.calldataBuy).toStrictEqual(calldataBuy);
+		expect(decoded.args.calldataSell).toStrictEqual(calldataSell);
+		expect(decoded.args.rssMetadata).toStrictEqual(rssMetadata);
+		expect(decoded.args.feeMethodsSidesKindsHowToCalls).toStrictEqual(feeMethodsSidesKindsHowToCalls);
+	})
+
+	test('parses a transaction', () => {
+		const decoded = decodeAtomicMatch(data);
+		const parsed = parseAtomicMatch(decoded)
+		expect(parseInt(parsed.buyOrder.basePrice)).toBe(16);
+	})
 })
 
 /* ----------------------

@@ -1,12 +1,13 @@
 // @ts-check
 
-import { convertHexGweiToEth } from "../utils/formatting.js";
+import { convertHexGweiToEth } from "../utils/formatting";
 import { BigNumber, ethers } from "ethers";
 
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const abi = require('./abi.json');
+//import { createRequire } from "module";
+//const require = createRequire(import.meta.url);
+//const abi = require('./abi.json');
 
+import abi from './abi.json';
 /* ----------------------------------------------------
 |													   |
 |				Wyvern Exchange Decoding			   |
@@ -17,51 +18,51 @@ const abi = require('./abi.json');
 
 
 /// Returns the sale side from a boolean integer.
-const saleSide = (int) => {
+const saleSide = (int: number) => {
 	return (int == 0) ? "Buy" : "Sell"
 }
 
 /// Returns the sale kind from a boolean integer.
-const saleKind = (int) => {
+const saleKind = (int: number) => {
 	return (int == 0) ? "Fixed Price" : "Dutch Auction";
 }
 
 /// Returns a fee method from a boolean integer. Usually will be "Split Fee".
-const feeMethod = (int) => {
+const feeMethod = (int: number) => {
 	return (int == 0) ? "Protocol Fee" : "Split Fee";
 }
 
 // Returns a calling method from a boolean integer.
-const howToCall = (int) => {
+const howToCall = (int: number) => {
 	return (int == 0) ? "Call" : "Delegate Call";
 }
 
 // Returns a timestamp from a hex value.
-const timeFromHex = (hex) => {
+const timeFromHex = (hex: string) => {
 	const bigNumber = BigNumber.from(hex);
 	const int = bigNumber.toNumber();
 	return (int == 0) ? "Never" : int;
 }
 
 // Just a plain number.
-const numberFromHex = (hex) => {
+const numberFromHex = (hex: string) => {
 	const bigNumber = BigNumber.from(hex);
 	return bigNumber.toNumber();
 }
 
 // Maker and taker fees are denominated in basis points.
-const percentageFromBasisHex = (hex) => {
+const percentageFromBasisHex = (hex: string) => {
 	return (numberFromHex(hex) / 100);
 }
 
 // Returns a string describing the fee, as a percentage and as an ETH value.
-const feeDescription = (hex, totalCost) => {
+const feeDescription = (hex: string, totalCost: number) => {
 	const percent = percentageFromBasisHex(hex);
 	const feeCost = totalCost / 100 * percent;
 	return percent.toString() + "%" + " | " + feeCost + "E"
 }
 
-export const decodeAtomicMatch = (data) => {
+export const decodeAtomicMatch = (data: string) => {
 	const ifc = new ethers.utils.Interface(abi)
 	const parsedTransaction = ifc.parseTransaction({ data })
 	return parsedTransaction;

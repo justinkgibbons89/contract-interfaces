@@ -1,3 +1,2 @@
-import { decodeAtomicMatch } from "./opensea/atomicMatch.js";
-
+//@ts-check
 console.log('running...')
