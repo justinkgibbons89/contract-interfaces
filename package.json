@@ -2,12 +2,13 @@
 	"name": "contract-interfaces",
 	"version": "1.0.0",
 	"description": "",
-	"main": "lib/index.js",
+	"main": "js/index.js",
 	"scripts": {
 		"test": "node node_modules/jest/bin/jest.js",
-		"start": "npx tsc && node lib/index.js",
-		"restart": "node lib/index.js",
-		"build": "npx tsc"
+		"start": "npx tsc && node js/index.js",
+		"restart": "node js/index.js",
+		"build": "npx tsc",
+		"clean": "rm -rf ./js/"
 	},
 	"keywords": [],
 	"author": "",
@@ -16,7 +17,6 @@
 		"@types/jest": "^27.5.0",
 		"ethers": "^5.6.5",
 		"jest": "^28.1.0",
-		"mocha": "^10.0.0",
 		"ts-jest": "^28.0.2"
 	}
 }
