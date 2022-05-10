@@ -17,12 +17,12 @@ describe("atomic match understanding", () => {
 	test('parses a transaction', () => {
 		const decoded = decodeAtomicMatch(data);
 		const parsed = parseAtomicMatch(decoded)
-		expect(parseInt(parsed.buyOrder.basePrice)).toBe(16);
+		expect(parsed.buy.basePrice).toBe(16);
 	})
 
 	test('interprets a transaction', () => {
 		const interpreted = interpretAtomicMatch(data);
-		expect(parseInt(interpreted.buyOrder.basePrice)).toBe(16);
+		expect(interpreted.buy.basePrice).toBe(16);
 	})
 })
 

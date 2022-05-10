@@ -1,34 +1,32 @@
 import { convertHexGweiToEth } from "../utils/formatting";
 import { BigNumber, ethers } from "ethers";
 import abi from './abi.json';
+import { AtomicMatchTransaction, FeeMethod, HowToCall, Order, SaleKind, SaleSide } from "./order";
 
 /* ----------------------------------------------------
-|													   |
-|				Wyvern Exchange Decoding			   |
-|	Decoding methods for Wyvern Exchange v2 contract   |
-|	transactions as used by OpenSea.				   |
-|													   |
------------------------------------------------------- */
-
+|              Wyvern Exchange Decoding                |
+|   Decoding methods for Wyvern Exchange v2 contract   |
+|   transactions as used by OpenSea.                   |
+----------------------------------------------------- */
 
 /// Returns the sale side from a boolean integer.
 const saleSide = (int: number) => {
-	return (int == 0) ? "Buy" : "Sell"
+	return int as SaleSide;
 }
 
 /// Returns the sale kind from a boolean integer.
 const saleKind = (int: number) => {
-	return (int == 0) ? "Fixed Price" : "Dutch Auction";
+	return int as SaleKind;
 }
 
 /// Returns a fee method from a boolean integer. Usually will be "Split Fee".
 const feeMethod = (int: number) => {
-	return (int == 0) ? "Protocol Fee" : "Split Fee";
+	return int as FeeMethod;
 }
 
 // Returns a calling method from a boolean integer.
 const howToCall = (int: number) => {
-	return (int == 0) ? "Call" : "Delegate Call";
+	return int as HowToCall;
 }
 
 // Returns a timestamp from a hex value.
@@ -66,10 +64,10 @@ export const decodeAtomicMatch = (data: string) => {
 export const parseAtomicMatch = ({ args, value }) => {
 	const val = convertHexGweiToEth(value._hex);
 
-	const buyOrder = {
+	let buy: Order = {
 		exchange: args.addrs[0],
-		buyCalldata: args.calldataBuy,
-		sellCalldata: args.calldataSell,
+		calldataBuy: args.calldataBuy,
+		calldataSell: args.calldataSell,
 		maker: args.addrs[1],
 		taker: args.addrs[2],
 		makerRelayerFee: feeDescription(args.uints[0], value),
@@ -78,16 +76,41 @@ export const parseAtomicMatch = ({ args, value }) => {
 		takerProtocolFee: percentageFromBasisHex(args.uints[3]),
 		feeRecipient: args.addrs[3],
 		feeMethod: feeMethod(args.feeMethodsSidesKindsHowToCalls[0]),
-		side: saleSide(args.feeMethodsSidesKindsHowToCalls[1]),
+		saleSide: saleSide(args.feeMethodsSidesKindsHowToCalls[1]),
 		saleKind: saleKind(args.feeMethodsSidesKindsHowToCalls[2]),
 		target: args.addrs[4],
-		authenticatedProxy: howToCall(args.feeMethodsSidesKindsHowToCalls[3]),
+		howToCall: howToCall(args.feeMethodsSidesKindsHowToCalls[3]),
 		staticTarget: args.addrs[5],
 		paymentToken: args.addrs[6],
 		basePrice: convertHexGweiToEth(args.uints[4]),
 		auctionExtra: convertHexGweiToEth(args.uints[5]),
 		listingTime: timeFromHex(args.uints[6]),
 		expirationTime: timeFromHex(args.uints[7]),
+		salt: 10,//txn.data.args.uints.input[8]
+	}
+
+	const sell: Order = {
+		calldataBuy: args.calldataBuy,
+		calldataSell: args.calldataSell,
+		exchange: args.addrs[7],
+		maker: args.addrs[8],
+		taker: args.addrs[9],
+		makerRelayerFee: feeDescription(args.uints[9], value),
+		takerRelayerFee: convertHexGweiToEth(args.uints[10]),
+		makerProtocolFee: convertHexGweiToEth(args.uints[11]),
+		takerProtocolFee: convertHexGweiToEth(args.uints[12]),
+		feeRecipient: args.addrs[10],
+		feeMethod: feeMethod(args.feeMethodsSidesKindsHowToCalls[4]),
+		saleSide: saleSide(args.feeMethodsSidesKindsHowToCalls[5]),
+		saleKind: saleKind(args.feeMethodsSidesKindsHowToCalls[6]),
+		target: args.addrs[11],
+		howToCall: howToCall(args.feeMethodsSidesKindsHowToCalls[7]),
+		staticTarget: args.addrs[12],
+		paymentToken: args.addrs[13],
+		basePrice: convertHexGweiToEth(args.uints[13]),
+		auctionExtra: convertHexGweiToEth(args.uints[14]),
+		listingTime: timeFromHex(args.uints[15]),
+		expirationTime: timeFromHex(args.uints[16]),
 		salt: 10,//txn.data.args.uints.input[8]
 	}
 
@@ -103,40 +126,11 @@ export const parseAtomicMatch = ({ args, value }) => {
 	//	s: txn.data.args.rssMetadata.input[3]
 	//}
 
-	//const sellOrder = {
-	//	buyCalldata: txn.data.args.calldataBuy.input,
-	//	sellCalldata: txn.data.args.calldataSell.input,
-	//	exchange: txn.data.args.addrs.input[7],
-	//	maker: txn.data.args.addrs.input[8],
-	//	taker: txn.data.args.addrs.input[9],
-	//	makerRelayerFee: convertHexGweiToEth(txn.data.args.uints.input[9]),
-	//	takerRelayerFee: convertHexGweiToEth(txn.data.args.uints.input[10]),
-	//	makerProtocolFee: convertHexGweiToEth(txn.data.args.uints.input[11]),
-	//	takerProtocolFee: convertHexGweiToEth(txn.data.args.uints.input[12]),
-	//	feeRecipient: txn.data.args.addrs.input[10],
-	//	feeMethod: feeMethod(txn.data.args.feeMethodsSidesKindsHowToCalls.input[4]),
-	//	side: saleSide(txn.data.args.feeMethodsSidesKindsHowToCalls.input[5]),
-	//	saleKind: saleKind(txn.data.args.feeMethodsSidesKindsHowToCalls.input[6]),
-	//	target: txn.data.args.addrs.input[11],
-	//	authenticatedProxy: howToCall(txn.data.args.feeMethodsSidesKindsHowToCalls.input[7]),
-	//	staticTarget: txn.data.args.addrs.input[12],
-	//	paymentToken: txn.data.args.addrs.input[13],
-	//	basePrice: convertHexGweiToEth(txn.data.args.uints.input[13]),
-	//	auctionExtra: convertHexGweiToEth(txn.data.args.uints.input[14]),
-	//	listingTime: timeFromHex(txn.data.args.uints.input[15]),
-	//	expirationTime: timeFromHex(txn.data.args.uints.input[16]),
-	//	salt: 10,//txn.data.args.uints.input[8]
-	//}
-
-	const fullOrder = {
-		value: val,
-		buyOrder: buyOrder
-		//sellOrder: sellOrder,
-		//sig1: sig1,
-		//sig2: sig2
-	}
-
-	return fullOrder;
+	return {
+		buy: buy,
+		sell: sell,
+		value: val
+	} as AtomicMatchTransaction
 }
 
 export const interpretAtomicMatch = (hex: string) => {
