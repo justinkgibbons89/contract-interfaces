@@ -8,6 +8,7 @@
 		"start": "npx tsc && node js/index.js",
 		"restart": "node js/index.js",
 		"build": "npx tsc",
+		"prepare": "npm run build",
 		"clean": "rm -rf ./js/"
 	},
 	"keywords": [],
