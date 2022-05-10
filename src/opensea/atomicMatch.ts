@@ -1,5 +1,3 @@
-// @ts-check
-
 import { convertHexGweiToEth } from "../utils/formatting";
 import { BigNumber, ethers } from "ethers";
 import abi from './abi.json';
