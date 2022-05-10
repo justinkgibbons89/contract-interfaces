@@ -1,4 +1,4 @@
-import { decodeAtomicMatch, parseAtomicMatch } from "../opensea/atomicMatch";
+import { decodeAtomicMatch, interpretAtomicMatch, parseAtomicMatch } from "../opensea/atomicMatch";
 
 /* ----------------------
 |		Definition	     |
@@ -18,6 +18,11 @@ describe("atomic match understanding", () => {
 		const decoded = decodeAtomicMatch(data);
 		const parsed = parseAtomicMatch(decoded)
 		expect(parseInt(parsed.buyOrder.basePrice)).toBe(16);
+	})
+
+	test('interprets a transaction', () => {
+		const interpreted = interpretAtomicMatch(data);
+		expect(parseInt(interpreted.buyOrder.basePrice)).toBe(16);
 	})
 })
 

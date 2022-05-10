@@ -2,11 +2,6 @@
 
 import { convertHexGweiToEth } from "../utils/formatting";
 import { BigNumber, ethers } from "ethers";
-
-//import { createRequire } from "module";
-//const require = createRequire(import.meta.url);
-//const abi = require('./abi.json');
-
 import abi from './abi.json';
 /* ----------------------------------------------------
 |													   |
@@ -143,4 +138,10 @@ export const parseAtomicMatch = ({ args, value }) => {
 	}
 
 	return fullOrder;
+}
+
+export const interpretAtomicMatch = (hex: string) => {
+	const decoded = decodeAtomicMatch(hex);
+	const parsed = parseAtomicMatch(decoded);
+	return parsed;
 }
