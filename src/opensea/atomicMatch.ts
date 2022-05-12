@@ -1,10 +1,7 @@
 import { convertHexGweiToEth } from "../utils/formatting";
 import { BigNumber, ethers } from "ethers";
-import abi from './abi.json';
-import otherside from './otherside-abi.json';
-import { ERC721ABI } from './constants'
-import { ERC721Approval, ERC721Transfer } from '../opensea/transfer';
 import { AtomicMatchTransaction, FeeMethod, HowToCall, Order, SaleKind, SaleSide } from "./order";
+import wyvernABI from './ABIs/wyvernExchangeABI.json';
 
 /* ----------------------------------------------------
 |              Wyvern Exchange Decoding                |
@@ -33,14 +30,14 @@ const howToCall = (int: number) => {
 }
 
 // Returns a timestamp from a hex value.
-const timeFromHex = (hex: string) => {
+export const timeFromHex = (hex: string) => {
 	const bigNumber = BigNumber.from(hex);
 	const int = bigNumber.toNumber();
 	return (int == 0) ? "Never" : int;
 }
 
 // Just a plain number.
-const numberFromHex = (hex: string) => {
+export const numberFromHex = (hex: string) => {
 	const bigNumber = BigNumber.from(hex);
 	return bigNumber.toNumber();
 }
@@ -57,42 +54,8 @@ const feeDescription = (hex: string, totalCost: number) => {
 	return percent.toString() + "%" + " | " + feeCost + "E"
 }
 
-
-const transferFromEvent = (event => {
-	return {
-		name: event.name,
-		arguments: {
-			from: event.args.from,
-			to: event.args.to,
-			tokenId: numberFromHex(event.args.tokenId._hex)
-		}
-	} as ERC721Transfer
-})
-
-const approvalFromEvent = (event => {
-	return {
-		name: event.name,
-		arguments: {
-			owner: event.args.owner,
-			approved: event.args.approved,
-			tokenId: numberFromHex(event.args.tokenId._hex)
-		}
-	} as ERC721Approval
-})
-
-export const parseERC721Logs = (({ data, topics }) => {
-	const ifc = new ethers.utils.Interface(ERC721ABI);
-	const event = ifc.parseLog({ topics, data })
-
-	switch (event.name) {
-		case "Transfer": return transferFromEvent(event);
-		case "Approval": return approvalFromEvent(event);
-		default: return null;
-	}
-});
-
 export const decodeAtomicMatch = (data: string) => {
-	const ifc = new ethers.utils.Interface(abi)
+	const ifc = new ethers.utils.Interface(wyvernABI)
 	const parsedTransaction = ifc.parseTransaction({ data })
 	return parsedTransaction;
 }

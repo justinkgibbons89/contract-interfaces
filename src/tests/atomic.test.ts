@@ -1,12 +1,13 @@
-import { decodeAtomicMatch, interpretAtomicMatch, parseAtomicMatch, parseERC721Logs } from "../opensea/atomicMatch";
-import { ERC721Approval, ERC721Transfer } from '../opensea/transfer';
+import { decodeAtomicMatch, parseAtomicMatch } from "../opensea/atomicMatch";
+import { parseERC721Logs, parseWyvernLogs } from '../opensea/atomicMatchLogs';
+import { ERC721Approval, ERC721Transfer } from '../opensea/events';
 
 /* ----------------------
 |		Definition	     |
  ---------------------- */
 
 describe("atomic match understanding", () => {
-	test('decodes a transaction', () => {
+	test('decodes an atomicMatch transaction using the wyvern abi', () => {
 		const decoded = decodeAtomicMatch(data);
 		expect(decoded.args.addrs).toStrictEqual(addresses);
 		expect(decoded.args.calldataBuy).toStrictEqual(calldataBuy);
@@ -15,18 +16,18 @@ describe("atomic match understanding", () => {
 		expect(decoded.args.feeMethodsSidesKindsHowToCalls).toStrictEqual(feeMethodsSidesKindsHowToCalls);
 	})
 
-	test('parses a transaction', () => {
+	test('parses a decoded atomicMatch into a structured object', () => {
 		const decoded = decodeAtomicMatch(data);
 		const parsed = parseAtomicMatch(decoded)
 		expect(parsed.buy.basePrice).toBe(16);
 	})
 
-	test('interprets a transaction', () => {
-		const interpreted = interpretAtomicMatch(data);
-		expect(interpreted.buy.basePrice).toBe(16);
-	})
+	//test('interprets a transaction', () => {
+	//	const interpreted = interpretAtomicMatch(data);
+	//	expect(interpreted.buy.basePrice).toBe(16);
+	//})
 
-	test('parses a transfer event from a log receipt', () => {
+	test('parses a Transfer event', () => {
 		const event = parseERC721Logs({ data: emptyData, topics: transferEventTopics });
 		const transfer = event as ERC721Transfer;
 		expect(transfer).not.toBeNull()
@@ -34,14 +35,21 @@ describe("atomic match understanding", () => {
 		expect(transfer.arguments.tokenId).toBe(5959);
 	});
 
-	test('parses an approval event from a log receipt', () => {
+	test('parses an Approval event', () => {
 		const event = parseERC721Logs({ data: emptyData, topics: approvalEventTopics });
-		const transfer = event as ERC721Approval;
-		expect(transfer).not.toBeNull()
-		expect(transfer.arguments.owner).toBe("0x2E73E34C50607B8FdFF70323Fa3279f41a522957");
-		expect(transfer.arguments.approved).toBe("0x0000000000000000000000000000000000000000");
-		expect(transfer.arguments.tokenId).toBe(5959);
+		const approval = event as ERC721Approval;
+		expect(approval).not.toBeNull()
+		expect(approval.arguments.owner).toBe("0x2E73E34C50607B8FdFF70323Fa3279f41a522957");
+		expect(approval.arguments.approved).toBe("0x0000000000000000000000000000000000000000");
+		expect(approval.arguments.tokenId).toBe(5959);
 	});
+
+	test('parses an OrdersMatched event', () => {
+		const matched = parseWyvernLogs({ data: ordersMatchedData, topics: ordersMatchedTopics });
+		expect(matched.name).toBe("OrdersMatched")
+		expect(matched.arguments.taker.toLowerCase()).toBe("0x9b00ccfda8368fc0955542ff3dac45824129113b");
+		expect(matched.arguments.price).toBe(16);
+	})
 })
 
 /* ----------------------
@@ -98,3 +106,11 @@ const approvalEventTopics = [
 	"0x0000000000000000000000000000000000000000000000000000000000000000",
 	"0x0000000000000000000000000000000000000000000000000000000000001747"
 ];
+
+const ordersMatchedData = "0x00000000000000000000000000000000000000000000000000000000000000004444001a5b46149a3f7bac1d595461948c376c849bf853c4991ec382efdd77d6000000000000000000000000000000000000000000000000de0b6b3a76400000";
+const ordersMatchedTopics = [
+	"0xc4109843e0b7d514e4c093114b863f8e7d8d9a458c372cd51bfe526b588006c9",
+	"0x0000000000000000000000002e73e34c50607b8fdff70323fa3279f41a522957",
+	"0x0000000000000000000000009b00ccfda8368fc0955542ff3dac45824129113b",
+	"0x0000000000000000000000000000000000000000000000000000000000000000"
+]
