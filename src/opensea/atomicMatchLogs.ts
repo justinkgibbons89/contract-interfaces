@@ -1,9 +1,35 @@
 import { ERC721ABI } from './constants'
-import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched } from './events';
+import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched, LogEvent } from './events';
 import { ethers } from 'ethers';
 import { numberFromHex } from './atomicMatch';
 import { convertHexGweiToEth } from '../utils/formatting';
 import wyvernABI from './ABIs/wyvernExchangeABI.json';
+
+export const parseUnknownLogs = (logs => {
+	return logs.map(log => {
+		return parseUnknownLog(log);
+	}) as LogEvent[]
+})
+
+export const parseUnknownLog = (log => {
+	try {
+		const erc721Event = parseERC721Logs({ data: log.data, topics: log.topics });
+		if (erc721Event) { return erc721Event };
+	} catch (err) {
+		// ignore error //console.log(formatError(err));
+	}
+
+	try {
+		const wyvernEvent = parseWyvernLogs({ data: log.data, topics: log.topics });
+		if (wyvernEvent) { return wyvernEvent }
+	} catch (err) {
+		// ignore error //console.log(formatError(err));
+	}
+
+	console.log("Couldn't parse logs!");
+	return null;
+})
+
 
 export const parseERC721Logs = (({ data, topics }) => {
 	const ifc = new ethers.utils.Interface(ERC721ABI);

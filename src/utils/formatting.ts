@@ -7,3 +7,13 @@ export const convertHexGweiToEth = (hex: string) => {
 	const eth = formatEther(gwei);
 	return parseInt(eth);
 }
+
+export const formatError = (err => {
+	return '!! Caught Error !!\n'
+		+ '------------------\n'
+		+ err.code + '\n'
+		+ err.reason + '\n'
+		+ err.argument
+		+ ' - '
+		+ err.value + '\n------------------';
+});
