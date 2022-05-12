@@ -1,6 +1,9 @@
 import { convertHexGweiToEth } from "../utils/formatting";
 import { BigNumber, ethers } from "ethers";
 import abi from './abi.json';
+import otherside from './otherside-abi.json';
+import { ERC721ABI } from './constants'
+import { ERC721Approval, ERC721Transfer } from '../opensea/transfer';
 import { AtomicMatchTransaction, FeeMethod, HowToCall, Order, SaleKind, SaleSide } from "./order";
 
 /* ----------------------------------------------------
@@ -53,6 +56,40 @@ const feeDescription = (hex: string, totalCost: number) => {
 	const feeCost = totalCost / 100 * percent;
 	return percent.toString() + "%" + " | " + feeCost + "E"
 }
+
+
+const transferFromEvent = (event => {
+	return {
+		name: event.name,
+		arguments: {
+			from: event.args.from,
+			to: event.args.to,
+			tokenId: numberFromHex(event.args.tokenId._hex)
+		}
+	} as ERC721Transfer
+})
+
+const approvalFromEvent = (event => {
+	return {
+		name: event.name,
+		arguments: {
+			owner: event.args.owner,
+			approved: event.args.approved,
+			tokenId: numberFromHex(event.args.tokenId._hex)
+		}
+	} as ERC721Approval
+})
+
+export const parseERC721Logs = (({ data, topics }) => {
+	const ifc = new ethers.utils.Interface(ERC721ABI);
+	const event = ifc.parseLog({ topics, data })
+
+	switch (event.name) {
+		case "Transfer": return transferFromEvent(event);
+		case "Approval": return approvalFromEvent(event);
+		default: return null;
+	}
+});
 
 export const decodeAtomicMatch = (data: string) => {
 	const ifc = new ethers.utils.Interface(abi)

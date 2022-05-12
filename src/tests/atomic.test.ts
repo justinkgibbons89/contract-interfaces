@@ -1,4 +1,5 @@
-import { decodeAtomicMatch, interpretAtomicMatch, parseAtomicMatch } from "../opensea/atomicMatch";
+import { decodeAtomicMatch, interpretAtomicMatch, parseAtomicMatch, parseERC721Logs } from "../opensea/atomicMatch";
+import { ERC721Approval, ERC721Transfer } from '../opensea/transfer';
 
 /* ----------------------
 |		Definition	     |
@@ -24,6 +25,23 @@ describe("atomic match understanding", () => {
 		const interpreted = interpretAtomicMatch(data);
 		expect(interpreted.buy.basePrice).toBe(16);
 	})
+
+	test('parses a transfer event from a log receipt', () => {
+		const event = parseERC721Logs({ data: emptyData, topics: transferEventTopics });
+		const transfer = event as ERC721Transfer;
+		expect(transfer).not.toBeNull()
+		expect(transfer.arguments.from).toBe("0x2E73E34C50607B8FdFF70323Fa3279f41a522957");
+		expect(transfer.arguments.tokenId).toBe(5959);
+	});
+
+	test('parses an approval event from a log receipt', () => {
+		const event = parseERC721Logs({ data: emptyData, topics: approvalEventTopics });
+		const transfer = event as ERC721Approval;
+		expect(transfer).not.toBeNull()
+		expect(transfer.arguments.owner).toBe("0x2E73E34C50607B8FdFF70323Fa3279f41a522957");
+		expect(transfer.arguments.approved).toBe("0x0000000000000000000000000000000000000000");
+		expect(transfer.arguments.tokenId).toBe(5959);
+	});
 })
 
 /* ----------------------
@@ -62,4 +80,21 @@ const addresses = [
 	'0xBAf2127B49fC93CbcA6269FAdE0F7F31dF4c88a7',
 	'0x0000000000000000000000000000000000000000',
 	'0x0000000000000000000000000000000000000000'
+];
+
+
+const emptyData = "0x";
+
+const transferEventTopics = [
+	"0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+	"0x0000000000000000000000002e73e34c50607b8fdff70323fa3279f41a522957",
+	"0x0000000000000000000000009b00ccfda8368fc0955542ff3dac45824129113b",
+	"0x0000000000000000000000000000000000000000000000000000000000001747"
+];
+
+const approvalEventTopics = [
+	"0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+	"0x0000000000000000000000002e73e34c50607b8fdff70323fa3279f41a522957",
+	"0x0000000000000000000000000000000000000000000000000000000000000000",
+	"0x0000000000000000000000000000000000000000000000000000000000001747"
 ];
