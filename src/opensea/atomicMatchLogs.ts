@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { numberFromHex } from './atomicMatch';
 import { convertHexGweiToEth } from '../utils/formatting';
 import wyvernABI from './ABIs/wyvernExchangeABI.json';
+import { formatError } from '../utils/formatting';
 
 export const parseUnknownLogs = (logs => {
 	return logs.map(log => {
@@ -16,14 +17,20 @@ export const parseUnknownLog = (log => {
 		const erc721Event = parseERC721Logs({ data: log.data, topics: log.topics });
 		if (erc721Event) { return erc721Event };
 	} catch (err) {
-		// ignore error //console.log(formatError(err));
+		// ignore error 
+		if (err.code = ! "INVALID_ARGUMENT") {
+			console.log(formatError(err));
+		}
 	}
 
 	try {
 		const wyvernEvent = parseWyvernLogs({ data: log.data, topics: log.topics });
 		if (wyvernEvent) { return wyvernEvent }
 	} catch (err) {
-		// ignore error //console.log(formatError(err));
+		// ignore error 
+		if (err.code = ! "INVALID_ARGUMENT") {
+			console.log(formatError(err));
+		}
 	}
 
 	console.log("Couldn't parse logs!");
