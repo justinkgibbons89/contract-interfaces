@@ -4,8 +4,10 @@ import { OpenSeaExchangeAddress } from "./opensea/constants";
 import { AtomicMatchBundle } from "./opensea/order";
 
 export const decodeUnknownTransaction = ((data: string, logs: ReceiptLog[], address: string) => {
-	switch (address) {
-		case OpenSeaExchangeAddress:
+	console.log('decoding unknown transaction.....')
+	switch (address.toLowerCase()) {
+		case OpenSeaExchangeAddress.toLowerCase():
+			console.log("decoding opensea!")
 			const txn = interpretAtomicMatch(data);
 			const events = parseUnknownLogs(logs);
 			const bundle = { txn, events } as AtomicMatchBundle;
@@ -20,6 +22,7 @@ export const decodeUnknownTransaction = ((data: string, logs: ReceiptLog[], addr
 				return bundle
 			}
 		default:
+			console.log('unexpected address encountered!!')
 			throw new Error("Unknown contract address.")
 	}
 })
