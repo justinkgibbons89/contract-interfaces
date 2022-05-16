@@ -1,3 +1,10 @@
+import { LogEvent } from "./events"
+
+export type AtomicMatchBundle = {
+	txn: AtomicMatchTransaction
+	events: LogEvent[]
+}
+
 export type AtomicMatchTransaction = {
 	// The buy order.
 	buy: Order,
