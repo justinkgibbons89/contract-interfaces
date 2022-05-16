@@ -8,7 +8,14 @@ export const decodeUnknownTransaction = ((data: string, logs: EventSet[], addres
 		case OpenSeaExchangeAddress:
 			const txn = interpretAtomicMatch(data);
 			const events = parseUnknownLogs(logs);
-			return { txn, events } as AtomicMatchBundle;
+			const bundle = { txn, events } as AtomicMatchBundle;
+			if (bundle == null) {
+				console.log(txn);
+				console.log(events);
+				throw new Error("Decoding resulted in null.")
+			} else {
+				return bundle
+			}
 		default:
 			throw new Error("Unknown contract address.")
 	}
