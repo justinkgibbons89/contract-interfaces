@@ -1,7 +1,7 @@
 import { decodeAtomicMatch, parseAtomicMatch } from "../opensea/atomicMatch";
 import { parseERC721Logs, parseUnknownLog, parseWyvernLogs, parseUnknownLogs } from '../opensea/atomicMatchLogs';
 import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched } from '../opensea/events';
-import { decodeUnknownTransaction } from '../router';
+import { decodeUnknownTransaction, ReceiptLog } from '../router';
 import { OpenSeaExchangeAddress } from '../opensea/constants'
 import { data, addresses, calldataBuy, calldataSell, rssMetadata, feeMethodsSidesKindsHowToCalls } from './data';
 import { emptyData, transferEventTopics, approvalEventTopics, ordersMatchedData, ordersMatchedTopics, unknownLogSet } from './data';
@@ -73,7 +73,7 @@ describe("atomic match understanding", () => {
 	})
 
 	test('decode txn data and event logs for an unknown (atomic match) transaction', () => {
-		const decoded = decodeUnknownTransaction(data, unknownLogSet, OpenSeaExchangeAddress);
+		const decoded = decodeUnknownTransaction(data, unknownLogSet as ReceiptLog[], OpenSeaExchangeAddress);
 		const bundle = decoded as AtomicMatchBundle;
 		expect(bundle.txn.buy.basePrice).toBe(16);
 		expect(bundle.events[0].name).toBe('OrdersMatched');
