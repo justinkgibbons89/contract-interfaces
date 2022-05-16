@@ -72,7 +72,7 @@ describe("atomic match understanding", () => {
 	})
 
 	test('decode txn data and event logs for an unknown (atomic match) transaction', () => {
-		const { txn, events } = decodeUnknownTransaction({ data, logs: unknownLogSet, address: OpenSeaExchangeAddress });
+		const { txn, events } = decodeUnknownTransaction(data, unknownLogSet, OpenSeaExchangeAddress);
 		expect(txn.buy.basePrice).toBe(16);
 		expect(events[0].name).toBe('OrdersMatched');
 		expect(events[1].name).toBe('Transfer');
