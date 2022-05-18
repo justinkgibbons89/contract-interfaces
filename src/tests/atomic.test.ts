@@ -75,6 +75,8 @@ describe("atomic match understanding", () => {
 	test('decode txn data and event logs for an unknown (atomic match) transaction', () => {
 		const decoded = decodeUnknownTransaction(data, unknownLogSet as ReceiptLog[], OpenSeaExchangeAddress);
 		const bundle = decoded as AtomicMatchBundle;
+		console.log(bundle.txn.buy.basePrice)
+		console.log(bundle.events[0].name)
 		expect(bundle.txn.buy.basePrice).toBe(16);
 		expect(bundle.events[0].name).toBe('OrdersMatched');
 		expect(bundle.events[1].name).toBe('Transfer');

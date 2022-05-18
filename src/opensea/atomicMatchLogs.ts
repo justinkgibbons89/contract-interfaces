@@ -5,18 +5,19 @@ import { numberFromHex } from './atomicMatch';
 import { convertHexGweiToEth } from '../utils/formatting';
 import wyvernABI from './ABIs/wyvernExchangeABI.json';
 import { formatError } from '../utils/formatting';
+import { ReceiptLog } from '../router';
 
-export const parseUnknownLogs = (logs => {
+export const parseUnknownLogs = ((logs: ReceiptLog[]) => {
 	return logs.map(log => {
 		return parseUnknownLog(log);
 	}) as LogEvent[]
 })
 
-export const parseUnknownLog = (log => {
+export const parseUnknownLog = ((log: ReceiptLog) => {
 	try {
 		const erc721Event = parseERC721Logs({ data: log.data, topics: log.topics });
 		if (erc721Event) { return erc721Event };
-	} catch (err) {
+	} catch (err: any) {
 		// ignore error 
 		if (err.code = ! "INVALID_ARGUMENT") {
 			console.log(formatError(err));
@@ -26,7 +27,7 @@ export const parseUnknownLog = (log => {
 	try {
 		const wyvernEvent = parseWyvernLogs({ data: log.data, topics: log.topics });
 		if (wyvernEvent) { return wyvernEvent }
-	} catch (err) {
+	} catch (err: any) {
 		// ignore error 
 		if (err.code = ! "INVALID_ARGUMENT") {
 			console.log(formatError(err));
@@ -38,7 +39,7 @@ export const parseUnknownLog = (log => {
 })
 
 
-export const parseERC721Logs = (({ data, topics }) => {
+export const parseERC721Logs = (({ data, topics }: ReceiptLog) => {
 	const ifc = new ethers.utils.Interface(ERC721ABI);
 	const event = ifc.parseLog({ topics, data })
 
@@ -49,13 +50,13 @@ export const parseERC721Logs = (({ data, topics }) => {
 	}
 });
 
-export const parseWyvernLogs = (({ data, topics }) => {
+export const parseWyvernLogs = (({ data, topics }: ReceiptLog) => {
 	const ifc = new ethers.utils.Interface(wyvernABI);
 	const event = ifc.parseLog({ topics, data });
 	return ordersMatchedFromEvent(event);
 })
 
-const transferFromEvent = (event => {
+const transferFromEvent = ((event: any) => {
 	return {
 		name: event.name,
 		arguments: {
@@ -66,7 +67,7 @@ const transferFromEvent = (event => {
 	} as ERC721Transfer
 })
 
-const approvalFromEvent = (event => {
+const approvalFromEvent = ((event: any) => {
 	return {
 		name: event.name,
 		arguments: {
@@ -77,7 +78,7 @@ const approvalFromEvent = (event => {
 	} as ERC721Approval
 })
 
-const ordersMatchedFromEvent = (event => {
+const ordersMatchedFromEvent = ((event: any) => {
 	return {
 		name: event.name,
 		arguments: {

@@ -8,6 +8,8 @@
 		"esModuleInterop": true, /* Enables intero between CommonJS and ES */
 		"skipLibCheck": true, /* Skip type checking of declaration files. */
 		"forceConsistentCasingInFileNames": true, /* Disallow inconsistently */
+		"strictNullChecks": true,
+		"strict": true,
 		// Mods
 		"resolveJsonModule": true
 	},

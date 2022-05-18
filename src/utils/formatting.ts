@@ -8,7 +8,7 @@ export const convertHexGweiToEth = (hex: string) => {
 	return parseInt(eth);
 }
 
-export const formatError = (err => {
+export const formatError = ((err: any) => {
 	return '!! Caught Error !!\n'
 		+ '------------------\n'
 		+ err.code + '\n'

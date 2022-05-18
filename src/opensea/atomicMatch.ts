@@ -57,16 +57,12 @@ const feeDescription = (hex: string, totalCost: number) => {
 export const decodeAtomicMatch = (data: string) => {
 	const ifc = new ethers.utils.Interface(wyvernABI)
 	const parsedTransaction = ifc.parseTransaction({ data })
-	console.log('decoded atomic');
-	console.log(parsedTransaction);
 	return parsedTransaction;
 }
 
 // Parses an atomicMatch_ transaction and returns a structured description.
-export const parseAtomicMatch = ({ args, value }) => {
+export const parseAtomicMatch = ({ args, value }: { args: any, value: any }) => {
 	const val = convertHexGweiToEth(value._hex);
-	console.log('parsing args')
-	console.log(args);
 
 	let buy: Order = {
 		exchange: args.addrs[0],
