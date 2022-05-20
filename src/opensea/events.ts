@@ -1,9 +1,11 @@
-export interface LogEvent {
+export interface Event {
+	address: string,
 	name: string,
-	arguments: {},
+	arguments: any,
 }
 
 export type ERC721Transfer = {
+	address: string,
 	name: string,
 	arguments: {
 		from: string,
@@ -13,6 +15,7 @@ export type ERC721Transfer = {
 }
 
 export type ERC721Approval = {
+	address: string,
 	name: string,
 	arguments: {
 		owner: string,
@@ -22,6 +25,7 @@ export type ERC721Approval = {
 }
 
 export type WyvernOrdersMatched = {
+	address: string,
 	name: string,
 	arguments: {
 		maker: string,

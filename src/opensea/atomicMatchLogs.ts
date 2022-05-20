@@ -1,21 +1,28 @@
 import { ERC721ABI } from './constants'
-import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched, LogEvent } from './events';
+import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched, Event } from './events';
 import { ethers } from 'ethers';
 import { numberFromHex } from './atomicMatch';
 import { convertHexGweiToEth } from '../utils/formatting';
 import wyvernABI from './ABIs/wyvernExchangeABI.json';
 import { formatError } from '../utils/formatting';
 import { ReceiptLog } from '../router';
+import { parse, stringify } from 'ts-jest';
 
 export const parseUnknownLogs = ((logs: ReceiptLog[]) => {
+	//let events: any = {}
+	//for (const log of logs) {
+	//	const parsed = parseUnknownLog(log);
+	//	events[parsed.name] = parsed;
+	//}
+	//return events
 	return logs.map(log => {
 		return parseUnknownLog(log);
-	}) as LogEvent[]
+	}) as Event[]
 })
 
 export const parseUnknownLog = ((log: ReceiptLog) => {
 	try {
-		const erc721Event = parseERC721Logs({ data: log.data, topics: log.topics });
+		const erc721Event = parseERC721Logs(log);
 		if (erc721Event) { return erc721Event };
 	} catch (err: any) {
 		// ignore error 
@@ -25,7 +32,7 @@ export const parseUnknownLog = ((log: ReceiptLog) => {
 	}
 
 	try {
-		const wyvernEvent = parseWyvernLogs({ data: log.data, topics: log.topics });
+		const wyvernEvent = parseWyvernLogs(log);
 		if (wyvernEvent) { return wyvernEvent }
 	} catch (err: any) {
 		// ignore error 
@@ -34,30 +41,29 @@ export const parseUnknownLog = ((log: ReceiptLog) => {
 		}
 	}
 
-	console.log("Couldn't parse logs!");
-	return null;
+	throw new Error("Couldn't parse log!")
 })
 
 
-export const parseERC721Logs = (({ data, topics }: ReceiptLog) => {
+export const parseERC721Logs = (({ data, topics, address }: ReceiptLog) => {
 	const ifc = new ethers.utils.Interface(ERC721ABI);
 	const event = ifc.parseLog({ topics, data })
-
 	switch (event.name) {
-		case "Transfer": return transferFromEvent(event);
-		case "Approval": return approvalFromEvent(event);
+		case "Transfer": return transferFromEvent(event, address);
+		case "Approval": return approvalFromEvent(event, address);
 		default: return null;
 	}
 });
 
-export const parseWyvernLogs = (({ data, topics }: ReceiptLog) => {
+export const parseWyvernLogs = (({ data, topics, address }: ReceiptLog) => {
 	const ifc = new ethers.utils.Interface(wyvernABI);
 	const event = ifc.parseLog({ topics, data });
-	return ordersMatchedFromEvent(event);
+	return ordersMatchedFromEvent(event, address);
 })
 
-const transferFromEvent = ((event: any) => {
+const transferFromEvent = ((event: any, address: string) => {
 	return {
+		address: address,
 		name: event.name,
 		arguments: {
 			from: event.args.from,
@@ -67,8 +73,9 @@ const transferFromEvent = ((event: any) => {
 	} as ERC721Transfer
 })
 
-const approvalFromEvent = ((event: any) => {
+const approvalFromEvent = ((event: any, address: string) => {
 	return {
+		address: address,
 		name: event.name,
 		arguments: {
 			owner: event.args.owner,
@@ -78,8 +85,9 @@ const approvalFromEvent = ((event: any) => {
 	} as ERC721Approval
 })
 
-const ordersMatchedFromEvent = ((event: any) => {
+const ordersMatchedFromEvent = ((event: any, address: string) => {
 	return {
+		address: address,
 		name: event.name,
 		arguments: {
 			maker: event.args.maker,

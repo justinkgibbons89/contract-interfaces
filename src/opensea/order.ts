@@ -1,8 +1,17 @@
-import { LogEvent } from "./events"
+import { Event } from "./events"
+
+export interface TransactionBundle {
+	txn: Transaction
+	events: Event[]
+}
 
 export type AtomicMatchBundle = {
 	txn: AtomicMatchTransaction
-	events: LogEvent[]
+	events: Event[]
+}
+
+export interface Transaction {
+	value: number
 }
 
 export type AtomicMatchTransaction = {

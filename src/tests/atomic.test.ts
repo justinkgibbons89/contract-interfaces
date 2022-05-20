@@ -3,9 +3,10 @@ import { parseERC721Logs, parseUnknownLog, parseWyvernLogs, parseUnknownLogs } f
 import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched } from '../opensea/events';
 import { decodeUnknownTransaction, ReceiptLog } from '../router';
 import { OpenSeaExchangeAddress } from '../opensea/constants'
-import { data, addresses, calldataBuy, calldataSell, rssMetadata, feeMethodsSidesKindsHowToCalls } from './data';
+import { data, addresses, calldataBuy, calldataSell, rssMetadata, feeMethodsSidesKindsHowToCalls, OthersideAddress } from './data';
 import { emptyData, transferEventTopics, approvalEventTopics, ordersMatchedData, ordersMatchedTopics, unknownLogSet } from './data';
 import { AtomicMatchBundle } from "../opensea/order";
+import { describeTransaction } from '../opensea/description'
 
 describe("atomic match understanding", () => {
 	test('decode an atomicMatch transaction using the wyvern abi', () => {
@@ -24,7 +25,7 @@ describe("atomic match understanding", () => {
 	})
 
 	test('parse a Transfer event', () => {
-		const event = parseERC721Logs({ data: emptyData, topics: transferEventTopics });
+		const event = parseERC721Logs({ data: emptyData, topics: transferEventTopics, address: OthersideAddress });
 		const transfer = event as ERC721Transfer;
 		expect(transfer).not.toBeNull()
 		expect(transfer.arguments.from).toBe("0x2E73E34C50607B8FdFF70323Fa3279f41a522957");
@@ -32,7 +33,7 @@ describe("atomic match understanding", () => {
 	});
 
 	test('parse an Approval event', () => {
-		const event = parseERC721Logs({ data: emptyData, topics: approvalEventTopics });
+		const event = parseERC721Logs({ data: emptyData, topics: approvalEventTopics, address: OthersideAddress });
 		const approval = event as ERC721Approval;
 		expect(approval).not.toBeNull()
 		expect(approval.arguments.owner).toBe("0x2E73E34C50607B8FdFF70323Fa3279f41a522957");
@@ -41,14 +42,14 @@ describe("atomic match understanding", () => {
 	});
 
 	test('parse an OrdersMatched event', () => {
-		const matched = parseWyvernLogs({ data: ordersMatchedData, topics: ordersMatchedTopics });
+		const matched = parseWyvernLogs({ data: ordersMatchedData, topics: ordersMatchedTopics, address: OpenSeaExchangeAddress });
 		expect(matched.name).toBe("OrdersMatched")
 		expect(matched.arguments.taker.toLowerCase()).toBe("0x9b00ccfda8368fc0955542ff3dac45824129113b");
 		expect(matched.arguments.price).toBe(16);
 	})
 
 	test('parse an unknown log event (which is actually a Transfer)', () => {
-		const unknownEvent = parseUnknownLog({ data: emptyData, topics: transferEventTopics });
+		const unknownEvent = parseUnknownLog({ data: emptyData, topics: transferEventTopics, address: OthersideAddress });
 		const transfer = unknownEvent as ERC721Transfer;
 		expect(transfer).not.toBeNull()
 		expect(transfer.arguments.from).toBe("0x2E73E34C50607B8FdFF70323Fa3279f41a522957");
@@ -56,7 +57,7 @@ describe("atomic match understanding", () => {
 	})
 
 	test('parse an unknown log event (which is actually an OrdersMatched', () => {
-		const unknown = parseUnknownLog({ data: ordersMatchedData, topics: ordersMatchedTopics });
+		const unknown = parseUnknownLog({ data: ordersMatchedData, topics: ordersMatchedTopics, address: OpenSeaExchangeAddress });
 		const matched = unknown as WyvernOrdersMatched;
 		expect(matched).not.toBe(null);
 		expect(matched.arguments.taker.toLowerCase()).toBe("0x9b00ccfda8368fc0955542ff3dac45824129113b");
@@ -75,11 +76,12 @@ describe("atomic match understanding", () => {
 	test('decode txn data and event logs for an unknown (atomic match) transaction', () => {
 		const decoded = decodeUnknownTransaction(data, unknownLogSet as ReceiptLog[], OpenSeaExchangeAddress);
 		const bundle = decoded as AtomicMatchBundle;
-		console.log(bundle.txn.buy.basePrice)
-		console.log(bundle.events[0].name)
+		describeTransaction(bundle);
 		expect(bundle.txn.buy.basePrice).toBe(16);
 		expect(bundle.events[0].name).toBe('OrdersMatched');
 		expect(bundle.events[1].name).toBe('Transfer');
 		expect(bundle.events[2].name).toBe('Approval');
+		expect(bundle.events[0].address).toBe(OpenSeaExchangeAddress);
+		expect(bundle.events[1].address).toBe(OthersideAddress);
 	})
 })

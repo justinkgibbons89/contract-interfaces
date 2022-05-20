@@ -25,6 +25,7 @@ export const approvalEventTopics = [
 	"0x0000000000000000000000000000000000000000000000000000000000000000",
 	"0x0000000000000000000000000000000000000000000000000000000000001747"
 ];
+export const OthersideAddress = "0x34d85c9CDeB23FA97cb08333b511ac86E1C4E258";
 
 export const ordersMatchedData = "0x00000000000000000000000000000000000000000000000000000000000000004444001a5b46149a3f7bac1d595461948c376c849bf853c4991ec382efdd77d6000000000000000000000000000000000000000000000000de0b6b3a76400000";
 export const ordersMatchedTopics = [
@@ -36,9 +37,9 @@ export const ordersMatchedTopics = [
 
 // includes OrdersMatched, Transfer, and Approval events in this order
 export const unknownLogSet = [
-	{ data: ordersMatchedData, topics: ordersMatchedTopics },
-	{ data: emptyData, topics: transferEventTopics },
-	{ data: emptyData, topics: approvalEventTopics },
+	{ address: "0x7f268357A8c2552623316e2562D90e642bB538E5", data: ordersMatchedData, topics: ordersMatchedTopics },
+	{ address: "0x34d85c9CDeB23FA97cb08333b511ac86E1C4E258", data: emptyData, topics: transferEventTopics },
+	{ address: "0x34d85c9CDeB23FA97cb08333b511ac86E1C4E258", data: emptyData, topics: approvalEventTopics },
 ]
 
 /* */
