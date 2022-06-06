@@ -12,11 +12,11 @@ export type SaleDescription = {
 }
 
 export const describeTransaction = (txn: TransactionBundle) => {
-	const typeDesc = typeof (txn);
 	if (<AtomicMatchBundle>txn != null) {
 		const desc = describeAtomicMatch(txn as AtomicMatchBundle);
+		return desc
 	} else {
-		console.log('not atomic match')
+		throw new Error('Transaction did not match the Atomic Match profile.')
 	}
 }
 
@@ -26,6 +26,7 @@ const describeAtomicMatch = (bundle: AtomicMatchBundle) => {
 	}) as ERC721Transfer
 
 	if (transfer == undefined) {
+		console.log('no transfer event')
 		throw new Error("No transfer event.")
 	}
 
