@@ -1,7 +1,7 @@
 import { convertHexGweiToEth } from "../utils/formatting";
 import { BigNumber, ethers } from "ethers";
 import { AtomicMatchTransaction, FeeMethod, HowToCall, Order, SaleKind, SaleSide } from "./order";
-import wyvernABI from './ABIs/wyvernExchangeABI.json';
+import wyvernABI from '../ABIs/wyvernV2.json';
 
 /* ----------------------------------------------------
 |              Wyvern Exchange Decoding                |

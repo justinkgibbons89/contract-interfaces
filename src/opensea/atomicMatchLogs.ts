@@ -1,9 +1,9 @@
-import { ERC721ABI } from './constants'
+import { ERC721ABI } from '../ABIs/erc721';
 import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched, Event } from './events';
 import { ethers } from 'ethers';
 import { numberFromHex } from './atomicMatch';
 import { convertHexGweiToEth } from '../utils/formatting';
-import wyvernABI from './ABIs/wyvernExchangeABI.json';
+import wyvernABI from '../ABIs/wyvernV2.json';
 import { formatError } from '../utils/formatting';
 import { ReceiptLog } from '../router';
 

@@ -2,8 +2,9 @@ import { TransactionDescription } from "ethers/lib/utils";
 import { tryDecodeERC721Transaction, tryDecodeTransaction } from "./erc721/decoding";
 import { interpretAtomicMatch } from "./opensea/atomicMatch";
 import { parseUnknownLogs } from "./opensea/atomicMatchLogs";
-import { ERC20ABI, OpenSeaExchangeAddress } from "./opensea/constants";
+import { OpenSeaExchangeAddress } from "./opensea/constants";
 import { describeTransaction } from "./opensea/description";
+import { ERC20ABI } from "./ABIs/erc20";
 
 export const describeUnknownTransaction = ((data: string, logs: ReceiptLog[], address: string) => {
 	const bundle = decodeUnknownTransaction(data, logs, address);

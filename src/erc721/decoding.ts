@@ -1,6 +1,6 @@
 const LooksRareAddress = "0xf4d2888d29D722226FafA5d9B24F9164c092421E";
 import { ethers } from "ethers";
-import { ERC721ABI } from "../opensea/constants";
+import { ERC721ABI } from "../ABIs/erc721";
 
 export const decodeERC721Transaction = (data: string) => {
 	const ifc = new ethers.utils.Interface(ERC721ABI);
