@@ -1,13 +1,14 @@
-import { decodeAtomicMatch, parseAtomicMatch } from "../opensea/atomicMatch";
+import { decodeAtomicMatch, parseAtomicMatch, numberFromHex, stringFromHex } from "../opensea/atomicMatch";
 import { parseERC721Logs, parseUnknownLog, parseWyvernLogs, parseUnknownLogs } from '../opensea/atomicMatchLogs';
 import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched } from '../opensea/events';
 import { decodeUnknownTransaction, describeUnknownTransaction, ReceiptLog } from '../router';
-import { OpenSeaExchangeAddress } from '../opensea/constants'
-import { data, addresses, calldataBuy, calldataSell, rssMetadata, feeMethodsSidesKindsHowToCalls, OthersideAddress } from './data';
-import { emptyData, transferEventTopics, approvalEventTopics, ordersMatchedData, ordersMatchedTopics, unknownLogSet } from './data';
+import { ERC20ABI, ERC721ABI, OpenSeaExchangeAddress } from '../opensea/constants'
+import { data, addresses, calldataBuy, calldataSell, rssMetadata, feeMethodsSidesKindsHowToCalls, OthersideAddress, genericERC721SetApprovalCallData, genericERC721ApprovedResult, genericERC721OperatorResult, genericERC721TransferFromData, erc721TransferResultFrom, erc721TransferResultTo, erc721TransferResultTokenId, erc721SafeTransferFromData, erc721SafeTransferResultFrom, erc721SafeTransferResultTo, erc721SafeTransferResultTokenId, erc20ApproveData, erc20ApproveResultAmount, erc20ApproveResultSpender, erc20TransferData, erc20TransferResultAmount, erc20TransferResultRecipient } from './testData';
+import { emptyData, transferEventTopics, approvalEventTopics, ordersMatchedData, ordersMatchedTopics, unknownLogSet } from './testData';
 import { AtomicMatchBundle } from "../opensea/order";
+import { ethers } from "ethers";
 
-describe("atomic match understanding", () => {
+describe("atomic match", () => {
 	test('decode an atomicMatch transaction using the wyvern abi', () => {
 		const decoded = decodeAtomicMatch(data);
 		expect(decoded.args.addrs).toStrictEqual(addresses);
@@ -90,5 +91,46 @@ describe("atomic match understanding", () => {
 		expect(desc.collection).toBe(OthersideAddress);
 		expect(desc.market).toBe(OpenSeaExchangeAddress);
 		expect(desc.price).toBe(16);
+	})
+})
+
+describe("erc-721", () => {
+	test('decode a setApprovalForAll transaction', () => {
+		const ifc = new ethers.utils.Interface(ERC721ABI);
+		const parsed = ifc.parseTransaction({ data: genericERC721SetApprovalCallData });
+		expect(parsed.args.operator).toBe(genericERC721OperatorResult);
+		expect(parsed.args.approved).toBe(genericERC721ApprovedResult)
+	})
+
+	test('decode a transferFrom transaction', () => {
+		const ifc = new ethers.utils.Interface(ERC721ABI);
+		const parsed = ifc.parseTransaction({ data: genericERC721TransferFromData });
+		expect(parsed.args.from).toBe(erc721TransferResultFrom)
+		expect(parsed.args.to).toBe(erc721TransferResultTo);
+		expect(numberFromHex(parsed.args.tokenId._hex)).toBe(erc721TransferResultTokenId);
+	})
+
+	test('decode a safeTransferFrom transaction', () => {
+		const ifc = new ethers.utils.Interface(ERC721ABI);
+		const parsed = ifc.parseTransaction({ data: erc721SafeTransferFromData });
+		expect(parsed.args.from).toBe(erc721SafeTransferResultFrom)
+		expect(parsed.args.to).toBe(erc721SafeTransferResultTo);
+		expect(numberFromHex(parsed.args.tokenId._hex)).toBe(erc721SafeTransferResultTokenId);
+	})
+})
+
+describe("erc-20", () => {
+	test('decode an approve transaction', () => {
+		const ifc = new ethers.utils.Interface(ERC20ABI);
+		const parsed = ifc.parseTransaction({ data: erc20ApproveData });
+		expect(parsed.args.spender).toBe(erc20ApproveResultSpender)
+		expect(stringFromHex(parsed.args.amount._hex)).toBe(erc20ApproveResultAmount);
+	})
+
+	test('decode a transfer transaction', () => {
+		const ifc = new ethers.utils.Interface(ERC20ABI);
+		const parsed = ifc.parseTransaction({ data: erc20TransferData });
+		expect(parsed.args.to).toBe(erc20TransferResultRecipient);
+		expect(stringFromHex(parsed.args.value._hex)).toBe(erc20TransferResultAmount);
 	})
 })

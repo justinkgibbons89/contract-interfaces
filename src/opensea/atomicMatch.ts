@@ -42,6 +42,11 @@ export const numberFromHex = (hex: string) => {
 	return bigNumber.toNumber();
 }
 
+export const stringFromHex = (hex: string) => {
+	const big = BigNumber.from(hex);
+	return big.toString();
+}
+
 // Maker and taker fees are denominated in basis points.
 const percentageFromBasisHex = (hex: string) => {
 	return (numberFromHex(hex) / 100);

@@ -6,15 +6,8 @@ import { convertHexGweiToEth } from '../utils/formatting';
 import wyvernABI from './ABIs/wyvernExchangeABI.json';
 import { formatError } from '../utils/formatting';
 import { ReceiptLog } from '../router';
-import { parse, stringify } from 'ts-jest';
 
 export const parseUnknownLogs = ((logs: ReceiptLog[]) => {
-	//let events: any = {}
-	//for (const log of logs) {
-	//	const parsed = parseUnknownLog(log);
-	//	events[parsed.name] = parsed;
-	//}
-	//return events
 	return logs.map(log => {
 		return parseUnknownLog(log);
 	}) as Event[]
