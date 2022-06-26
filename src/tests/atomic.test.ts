@@ -1,10 +1,10 @@
 import { decodeAtomicMatch, parseAtomicMatch, numberFromHex, stringFromHex } from "../opensea/atomicMatch";
 import { parseERC721Logs, parseUnknownLog, parseWyvernLogs, parseUnknownLogs } from '../opensea/atomicMatchLogs';
 import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched } from '../opensea/events';
-import { decodeUnknownTransaction, describeUnknownTransaction, ReceiptLog } from '../router';
-import { OpenSeaExchangeAddress } from '../opensea/constants'
 import { ERC20ABI } from "../ABIs/erc20";
 import { ERC721ABI } from "../ABIs/erc721";
+import { decodeUnknownTransaction, describeUnknownTransaction, ReceiptLog } from '../router';
+import { OpenSeaExchangeAddress } from '../opensea/constants'
 import { AtomicMatchBundle } from "../opensea/order";
 import { ethers } from "ethers";
 import * as data from './testData';
