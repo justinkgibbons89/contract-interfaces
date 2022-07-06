@@ -12,5 +12,4 @@ export const ERC1155ABI = [
 	"function balanceOfBatch(address[] calldata owners, uint256[] calldata ids)",
 	"function setAppprovalForAll(address operator, bool approved)",
 	"function isApprovedForAll(address owner, address operator)"
-
 ]

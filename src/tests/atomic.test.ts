@@ -9,7 +9,7 @@ import { AtomicMatchBundle } from "../opensea/order";
 import { ethers } from "ethers";
 import * as data from './testData';
 
-describe("atomic match", () => {
+describe("wyvern 2.0", () => {
 	test('decode an atomicMatch transaction using the wyvern abi', () => {
 		const decoded = decodeAtomicMatch(data.atomicMatchData);
 		expect(decoded.args.addrs).toStrictEqual(data.addresses);
