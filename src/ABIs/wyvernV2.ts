@@ -1,4 +1,4 @@
-[
+export const WyvernABI = [
 	{
 		"constant": true,
 		"inputs": [],

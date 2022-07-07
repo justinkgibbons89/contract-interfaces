@@ -1,4 +1,4 @@
-import { Event } from "./events"
+import { Event } from "./events.js"
 
 export interface TransactionBundle {
 	txn: Transaction

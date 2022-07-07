@@ -1,12 +1,12 @@
 export const ERC20ABI = [
 	// Optional Methods
-	"function name()",
-	"function symbol()",
-	"function decimals()",
+	"function name() view returns (string)",
+	"function symbol() view returns (string)",
+	"function decimals() view returns (uint8)",
 
 	// Required Methods
-	"function totalSupply()",
-	"function balanceOf(address owner)",
+	"function totalSupply() view returns (uint256)",
+	"function balanceOf(address owner) view returns (uint256)",
 	"function transfer(address to, uint256 value)",
 	"function transferFrom(address from, address to, uint256 value)",
 	"function approve(address spender, uint256 amount)",

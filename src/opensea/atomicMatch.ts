@@ -1,7 +1,7 @@
-import { convertHexGweiToEth } from "../utils/formatting";
+import { convertHexGweiToEth } from "../utils/formatting.js";
 import { BigNumber, ethers } from "ethers";
-import { AtomicMatchTransaction, FeeMethod, HowToCall, Order, SaleKind, SaleSide } from "./order";
-import wyvernABI from '../ABIs/wyvernV2.json';
+import { AtomicMatchTransaction, FeeMethod, HowToCall, Order, SaleKind, SaleSide } from "./order.js";
+import { WyvernABI } from '../ABIs/wyvernV2.js'
 
 /* ----------------------------------------------------
 |              Wyvern Exchange Decoding                |
@@ -60,7 +60,7 @@ const feeDescription = (hex: string, totalCost: number) => {
 }
 
 export const decodeAtomicMatch = (data: string) => {
-	const ifc = new ethers.utils.Interface(wyvernABI)
+	const ifc = new ethers.utils.Interface(WyvernABI)
 	const parsedTransaction = ifc.parseTransaction({ data })
 	return parsedTransaction;
 }

@@ -1,5 +1,5 @@
-import { ERC721Transfer } from "./events";
-import { AtomicMatchBundle, TransactionBundle } from "./order"
+import { ERC721Transfer } from "./events.js";
+import { AtomicMatchBundle, TransactionBundle } from "./order.js"
 
 export type SaleDescription = {
 	price: number,
