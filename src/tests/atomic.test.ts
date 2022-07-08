@@ -2,14 +2,17 @@ import { decodeAtomicMatch, parseAtomicMatch, numberFromHex, stringFromHex } fro
 import { parseERC721Logs, parseUnknownLog, parseWyvernLogs, parseUnknownLogs } from '../opensea/atomicMatchLogs.js';
 import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched } from '../opensea/events.js';
 import { ERC20ABI } from "../ABIs/erc20.js";
-import { ERC721ABI } from "../ABIs/erc721.js";
+import { ERC721ABI } from "../erc721/abi.js";
+import { ERC721 } from "../erc721/contract.js";
 import { decodeUnknownTransaction, describeUnknownTransaction, ReceiptLog } from '../router.js';
 import { OpenSeaExchangeAddress } from '../opensea/constants.js'
 import { AtomicMatchBundle } from "../opensea/order.js";
 import { ethers } from "ethers";
 import * as data from './testData.js';
+import { jest } from '@jest/globals'
+import 'dotenv/config'
 
-describe("wyvern 2.0", () => {
+describe("wyvern txns", () => {
 	test('decode an atomicMatch transaction using the wyvern abi', () => {
 		const decoded = decodeAtomicMatch(data.atomicMatchData);
 		expect(decoded.args.addrs).toStrictEqual(data.addresses);
@@ -95,7 +98,7 @@ describe("wyvern 2.0", () => {
 	})
 })
 
-describe("erc-721", () => {
+describe("erc-721 txns", () => {
 	test('decode a setApprovalForAll transaction', () => {
 		const ifc = new ethers.utils.Interface(ERC721ABI);
 		const parsed = ifc.parseTransaction({ data: data.genericERC721SetApprovalCallData });
@@ -120,7 +123,7 @@ describe("erc-721", () => {
 	})
 })
 
-describe("erc-20", () => {
+describe("erc-20 txns", () => {
 	test('decode an approve transaction', () => {
 		const ifc = new ethers.utils.Interface(ERC20ABI);
 		const parsed = ifc.parseTransaction({ data: data.erc20ApproveData });
@@ -133,5 +136,35 @@ describe("erc-20", () => {
 		const parsed = ifc.parseTransaction({ data: data.erc20TransferData });
 		expect(parsed.args.to).toBe(data.erc20TransferResultRecipient);
 		expect(stringFromHex(parsed.args.value._hex)).toBe(data.erc20TransferResultAmount);
+	})
+})
+
+describe("erc-721 contract", () => {
+	jest.setTimeout(60000);
+	const provider = new ethers.providers.EtherscanProvider(process.env.NETWORK, process.env.ALCHEMYKEY);
+	const otherdeed = new ERC721(data.OtherdeedAddress, provider)
+
+	test('get the name', async () => {
+		const name = await otherdeed.name()
+		expect(name).toBe("Otherdeed");
+	})
+
+	test('get the symbol', async () => {
+		const symbol = await otherdeed.symbol()
+		expect(symbol).toBe("OTHR")
+	})
+
+	test('get the image URL', async () => {
+		const image = await otherdeed.imageURL(4626)
+		expect(image).toBe("https://assets.otherside.xyz/otherdeeds/2316c364363835011369d1079d750408cf212410c9081aca201f98f44c8edf65.jpg")
+	})
+
+	test('get the some attributes from the metadata', async () => {
+		const attributes = await otherdeed.attributes(4626)
+		expect(attributes[0].trait_type).toBe("Category")
+		expect(attributes[0].value).toBe("Spirit")
+
+		expect(attributes[3].trait_type).toBe("Environment")
+		expect(attributes[3].value).toBe("Steppes")
 	})
 })

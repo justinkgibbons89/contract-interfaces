@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { stringFromHex } from "../opensea/atomicMatch.js";
-import { ERC721ABI, ERC721Metadata } from "../ABIs/erc721.js";
+import { ERC721ABI, ERC721Metadata } from './abi.js'
 import fetch from "node-fetch"
 
 // Describes an atttribute contained in NFT metadata.

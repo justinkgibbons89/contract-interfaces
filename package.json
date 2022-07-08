@@ -5,8 +5,9 @@
 	"main": "js/index.js",
 	"type": "module",
 	"scripts": {
-		"test": "node node_modules/jest/bin/jest.js",
+		"test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit --detectOpenHandles",
 		"start": "npx tsc && node --experimental-json-modules js/index.js",
+		"sandbox": "npx tsc && node --experimental-json-modules js/sandbox.js",
 		"restart": "node js/index.js",
 		"build": "npx tsc",
 		"prepare": "npm run build",
@@ -25,6 +26,7 @@
 		"ts-jest": "^28.0.2"
 	},
 	"devDependencies": {
+		"@babel/preset-typescript": "^7.18.6",
 		"jest-ts-webcompat-resolver": "^1.0.0"
 	}
 }

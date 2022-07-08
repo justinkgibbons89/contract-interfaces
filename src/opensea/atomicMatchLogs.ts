@@ -1,4 +1,4 @@
-import { ERC721ABI } from '../ABIs/erc721.js';
+import { ERC721ABI } from '../erc721/abi.js';
 import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched, Event } from './events.js';
 import { ethers } from 'ethers';
 import { numberFromHex } from './atomicMatch.js';
