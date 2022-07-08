@@ -2,10 +2,10 @@ export * from "./opensea/atomicMatch.js";
 export * from "./router.js";
 export * from "./opensea/order.js"
 
-import { ERC20 } from "./erc20/erc20Interface";
+import { ERC20 } from "./erc20/ERC20.js";
 import { ethers } from "ethers";
-import { OpenSeaExchangeAddress } from "./opensea/constants";
-import { ERC721 } from "./erc721/erc721Interface.js";
+import { OpenSeaExchangeAddress } from "./opensea/constants.js";
+import { ERC721 } from "./erc721/contract.js";
 import 'dotenv/config'
 
 console.log('starting...')
@@ -18,7 +18,7 @@ const main = async () => {
 	console.log(await otherdeed.name())
 	console.log(await otherdeed.symbol())
 
-	const metadata = await otherdeed.metadata(4626)
+	const metadata = await otherdeed.tokenMetadata(4626)
 	console.log(metadata);
 
 	const image = await otherdeed.imageURL(4626)

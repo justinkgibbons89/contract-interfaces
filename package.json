@@ -23,5 +23,8 @@
 		"jest": "^28.1.0",
 		"node-fetch": "^3.2.6",
 		"ts-jest": "^28.0.2"
+	},
+	"devDependencies": {
+		"jest-ts-webcompat-resolver": "^1.0.0"
 	}
 }

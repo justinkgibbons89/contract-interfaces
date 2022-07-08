@@ -1,4 +1,4 @@
-export const ERC4626 = [
+export const ERC4626ABI = [
 	// Events
 	"event Deposit(address indexed from, address indexed to, uint256 value)",
 	"event Withdraw(address indexed owner, address indexed to, uint256 value)",

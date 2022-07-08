@@ -1,13 +1,13 @@
-import { decodeAtomicMatch, parseAtomicMatch, numberFromHex, stringFromHex } from "../opensea/atomicMatch";
-import { parseERC721Logs, parseUnknownLog, parseWyvernLogs, parseUnknownLogs } from '../opensea/atomicMatchLogs';
-import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched } from '../opensea/events';
-import { ERC20ABI } from "../ABIs/erc20";
-import { ERC721ABI } from "../ABIs/erc721";
-import { decodeUnknownTransaction, describeUnknownTransaction, ReceiptLog } from '../router';
-import { OpenSeaExchangeAddress } from '../opensea/constants'
-import { AtomicMatchBundle } from "../opensea/order";
+import { decodeAtomicMatch, parseAtomicMatch, numberFromHex, stringFromHex } from "../opensea/atomicMatch.js";
+import { parseERC721Logs, parseUnknownLog, parseWyvernLogs, parseUnknownLogs } from '../opensea/atomicMatchLogs.js';
+import { ERC721Approval, ERC721Transfer, WyvernOrdersMatched } from '../opensea/events.js';
+import { ERC20ABI } from "../ABIs/erc20.js";
+import { ERC721ABI } from "../ABIs/erc721.js";
+import { decodeUnknownTransaction, describeUnknownTransaction, ReceiptLog } from '../router.js';
+import { OpenSeaExchangeAddress } from '../opensea/constants.js'
+import { AtomicMatchBundle } from "../opensea/order.js";
 import { ethers } from "ethers";
-import * as data from './testData';
+import * as data from './testData.js';
 
 describe("wyvern 2.0", () => {
 	test('decode an atomicMatch transaction using the wyvern abi', () => {
