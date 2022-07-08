@@ -3,7 +3,7 @@ import { ERC1155ABI } from "./ABIs/erc1155.js";
 import { ERC165ABI } from "./ABIs/erc165.js";
 import { ERC20ABI } from "./ABIs/erc20.js";
 import { ERC4626ABI } from "./ABIs/erc4626.js";
-import { ERC721ABI } from "./ABIs/erc721.js";
+import { ERC721ABI } from "./erc721/abi.js";
 import { WyvernABI } from "./ABIs/wyvernV2.js";
 
 // Interface standards supported by this library. A single contract can support multiple standards.
